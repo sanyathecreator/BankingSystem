@@ -1,30 +1,16 @@
 package org.example.model;
 
-public class User {
-    private String username;
-    private String password;
-    private double balance;
+import java.io.Serializable;
 
-    public User(String username, String password, double balance) {
-        this.username = username;
-        this.password = password;
-        this.balance = balance;
-    }
+public abstract class User implements Serializable {
+    protected String username;
+    protected String password;
 
     public String getUsername() {
         return username;
     }
 
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double amount) {
-        balance = amount;
-    }
-
-    @Override
-    public String toString() {
-        return "Username: " + username + " | Balance: $" + balance;
+    public String getPassword() {
+        return password;
     }
 }

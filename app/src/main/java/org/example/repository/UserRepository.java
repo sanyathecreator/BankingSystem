@@ -15,6 +15,10 @@ public class UserRepository {
         loadUsers();
     }
 
+    public Map<String, User> getAllUsers() {
+        return new HashMap<>(users);
+    }
+
     public void saveUser(User user) {
         users.put(user.getUsername(), user);
         saveUsers();

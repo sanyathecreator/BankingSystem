@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.Scanner;
 
-import org.example.model.User;
+import org.example.model.Customer;
 import org.example.service.AuthenticationService;
 import org.example.service.BankingService;
 
@@ -37,25 +37,27 @@ public class Main {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        User user = authService.login(username, password);
-        if (user == null) {
+        Customer customer = authService.login(username, password);
+        if (customer == null) {
             System.out.println("Incorrect username or password");
             return;
         }
 
-        System.out.println("Welcome, " + user.getUsername() + "\n");
+        System.out.println("Welcome, " + customer.getUsername() + "\n");
         while (true) {
             System.out.println("1. Check balance");
             System.out.println("2. Transfer money");
             System.out.println("0. Exit");
             int choice = scanner.nextInt();
+            scanner.nextLine();
 
             switch (choice) {
-                case 1 -> bankingService.checkBalance(user);
+                case 1 -> bankingService.checkBalance(customer);
                 case 2 -> {
                     System.out.print("Amount: ");
                     double amount = scanner.nextDouble();
-                    bankingService.transfer(user, amount);
+                    scanner.nextLine();
+                    bankingService.transfer(customer, amount);
                 }
                 case 0 -> {
                     return;

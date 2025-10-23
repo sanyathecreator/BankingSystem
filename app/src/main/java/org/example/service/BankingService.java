@@ -1,21 +1,21 @@
 package org.example.service;
 
-import org.example.model.User;
+import org.example.model.Customer;
 
 public class BankingService {
 
-    public void checkBalance(User user) {
-        System.out.println("Your balance: $" + String.format(".2f", user.getBalance()));
+    public void checkBalance(Customer customer) {
+        System.out.println("Your balance: $" + String.format("%.2f", customer.getBalance()));
     }
 
-    public void transfer(User user, double amount) {
-        if (user.getBalance() < amount) {
+    public void transfer(Customer customer, double amount) {
+        if (customer.getBalance() < amount) {
             System.out.println("You don't have enough money on your balance!");
             return;
         }
-        user.setBalance(user.getBalance() - amount);
+        customer.setBalance(customer.getBalance() - amount);
         System.out.println(
-                "Transfered: $" + amount +
-                        "\nYour balance: $" + user.getBalance());
+                "Transferred: $" + String.format("%.2f", amount) +
+                        "\nYour balance: $" + String.format("%.2f", customer.getBalance()));
     }
 }

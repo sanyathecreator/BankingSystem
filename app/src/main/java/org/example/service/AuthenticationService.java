@@ -1,12 +1,12 @@
 package org.example.service;
 
-import org.example.model.User;
+import org.example.model.Customer;
 
 public class AuthenticationService {
 
-    public User login(String username, String password) {
+    public Customer login(String username, String password) {
         if (password.equals("1234")) {
-            return new User(username, password, 3000);
+            return new Customer(username, password, 3000);
         }
         return null;
     }
