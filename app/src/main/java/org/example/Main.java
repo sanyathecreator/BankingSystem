@@ -26,7 +26,7 @@ public class Main {
                     System.out.println("Goodbye!");
                     return;
                 }
-                default -> System.out.println("Invalid choise.");
+                default -> System.out.println("Invalid choice.");
             }
         }
     }
@@ -60,7 +60,7 @@ public class Main {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("Invalid choise.");
+                default -> System.out.println("Invalid choice.");
             }
         }
     }
