@@ -15,6 +15,11 @@ public class UserRepository {
         loadUsers();
     }
 
+    public void saveUser(User user) {
+        users.put(user.getUsername(), user);
+        saveUsers();
+    }
+
     @SuppressWarnings("unchecked")
     private void loadUsers() {
         File file = new File(DATA_FILE);
@@ -27,6 +32,14 @@ public class UserRepository {
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Cannot load users. Error: " + e.getMessage());
             users = new HashMap<>();
+        }
+    }
+
+    private void saveUsers() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
+            oos.writeObject(users);
+        } catch (IOException e) {
+            System.err.println("Cannot save users. Error" + e.getMessage());
         }
     }
 }
