@@ -15,6 +15,14 @@ public class UserRepository {
         loadUsers();
     }
 
+    public User getUser(String username) {
+        return users.get(username);
+    }
+
+    public boolean userExists(String username) {
+        return users.containsKey(username);
+    }
+
     public Map<String, User> getAllUsers() {
         return new HashMap<>(users);
     }
