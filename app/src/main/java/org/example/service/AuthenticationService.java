@@ -27,10 +27,7 @@ public class AuthenticationService {
     }
 
     public boolean userExists(String username) {
-        if (userRepository.userExists(username)) {
-            return true;
-        }
-        return false;
+        return userRepository.userExists(username);
     }
 
     public void register(String username, String password) {
