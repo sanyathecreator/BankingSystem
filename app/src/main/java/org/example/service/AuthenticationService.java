@@ -11,15 +11,23 @@ public class AuthenticationService {
     }
 
     public Customer login(String username, String password) {
-        // TODO: Look if username is in users list and return error if not
-        // TODO: Check if the passwords match anr return error if not
-        if (password.equals("1234")) {
-            return new Customer(username, password, 3000);
+        Customer customer;
+
+        if (!userRepository.userExists(username)) {
+            System.out.println("Customer doesn't exists!");
+            return null;
+        } else {
+            customer = (Customer) userRepository.getUser(username);
         }
-        return null;
+        if (!customer.getPassword().equals(password)) {
+            System.out.println("Wrong password!");
+            return null;
+        }
+        return customer;
     }
 
     public void register(String username, String password) {
-        // TODO Create new user with username and passord and add him to users list
+        Customer customer = new Customer(username, password, 1000);
+        userRepository.saveUser(customer);
     }
 }
