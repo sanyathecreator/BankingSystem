@@ -26,6 +26,13 @@ public class AuthenticationService {
         return customer;
     }
 
+    public boolean userExists(String username) {
+        if (userRepository.userExists(username)) {
+            return true;
+        }
+        return false;
+    }
+
     public void register(String username, String password) {
         Customer customer = new Customer(username, password, 1000);
         userRepository.saveUser(customer);

@@ -83,6 +83,11 @@ public class CustomerMenu {
     private static void registrationMenu(Scanner scanner, AuthenticationService authService) {
         System.out.print("Username: ");
         String username = scanner.nextLine();
+        if (authService.userExists(username)) {
+            System.out.println("This username is already taken!\n");
+            return;
+        }
+
         System.out.print("Password: ");
         String password = scanner.nextLine();
         System.out.print("Confirm password: ");
