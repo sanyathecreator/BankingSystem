@@ -1,8 +1,14 @@
 package org.example.service;
 
 import org.example.model.Customer;
+import org.example.repository.UserRepository;
 
 public class BankingService {
+    private UserRepository userRepository;
+
+    public BankingService() {
+        this.userRepository = new UserRepository();
+    }
 
     public void checkBalance(Customer customer) {
         System.out.println("Your balance: $" + String.format("%.2f", customer.getBalance()));
@@ -17,5 +23,6 @@ public class BankingService {
         System.out.println(
                 "Transferred: $" + String.format("%.2f", amount) +
                         "\nYour balance: $" + String.format("%.2f", customer.getBalance()));
+        userRepository.saveUser(customer);
     }
 }
