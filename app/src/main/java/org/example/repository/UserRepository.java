@@ -28,6 +28,11 @@ public class UserRepository {
     private void loadUsers() {
         File file = new File(DATA_FILE);
         if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                System.err.println("Cannot create " + DATA_FILE + " file. Error: " + e.getMessage());
+            }
             return;
         }
 
