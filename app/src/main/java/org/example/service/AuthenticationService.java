@@ -1,8 +1,14 @@
 package org.example.service;
 
 import org.example.model.Customer;
+import org.example.repository.UserRepository;
 
 public class AuthenticationService {
+    private UserRepository userRepository;
+
+    public AuthenticationService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public Customer login(String username, String password) {
         // TODO: Look if username is in users list and return error if not
