@@ -6,8 +6,8 @@ import org.example.repository.UserRepository;
 public class BankingService {
     private UserRepository userRepository;
 
-    public BankingService() {
-        this.userRepository = new UserRepository();
+    public BankingService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void checkBalance(Customer customer) {
