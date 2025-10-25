@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.model.Customer;
+import org.example.model.User;
 import org.example.repository.UserRepository;
 
 public class AuthenticationService {
@@ -10,20 +11,20 @@ public class AuthenticationService {
         this.userRepository = userRepository;
     }
 
-    public Customer login(String username, String password) {
-        Customer customer;
+    public User login(String username, String password) {
+        User user;
 
         if (!userRepository.userExists(username)) {
             System.out.println("Customer doesn't exists!");
             return null;
         } else {
-            customer = (Customer) userRepository.getUser(username);
+            user = userRepository.getUser(username);
         }
-        if (!customer.getPassword().equals(password)) {
+        if (!user.getPassword().equals(password)) {
             System.out.println("Wrong password!");
             return null;
         }
-        return customer;
+        return user;
     }
 
     public boolean userExists(String username) {

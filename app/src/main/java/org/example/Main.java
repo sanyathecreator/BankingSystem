@@ -2,10 +2,13 @@ package org.example;
 
 import java.util.Scanner;
 
+import org.example.model.Customer;
+import org.example.model.User;
 import org.example.repository.UserRepository;
 import org.example.service.AuthenticationService;
 import org.example.service.BankingService;
 import org.example.ui.CustomerMenu;
+import org.example.ui.WelcomeMenu;
 
 public class Main {
     public static final Scanner scanner = new Scanner(System.in);
@@ -14,7 +17,8 @@ public class Main {
     public static final BankingService bankingService = new BankingService(userRepository);
 
     public static void main(String[] args) {
-        CustomerMenu.userMenu(scanner, authService, bankingService);
+        User user = WelcomeMenu.welcomeMenu(scanner, authService);
+        CustomerMenu.mainMenu((Customer) user, scanner, bankingService);
     }
 
 }

@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.example.model.Admin;
 import org.example.model.User;
 
 public class UserRepository {
@@ -38,6 +39,7 @@ public class UserRepository {
         if (!file.exists()) {
             try {
                 file.createNewFile();
+                createDefaultAdmin();
             } catch (IOException e) {
                 System.err.println("Cannot create " + DATA_FILE + " file. Error: " + e.getMessage());
             }
@@ -50,6 +52,11 @@ public class UserRepository {
             System.err.println("Cannot load users. Error: " + e.getMessage());
             users = new HashMap<>();
         }
+    }
+
+    private void createDefaultAdmin() {
+        Admin admin = new Admin("admin", "admin");
+        saveUser(admin);
     }
 
     private void saveUsers() {
