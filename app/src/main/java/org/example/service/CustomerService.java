@@ -3,10 +3,10 @@ package org.example.service;
 import org.example.model.Customer;
 import org.example.repository.UserRepository;
 
-public class BankingService {
+public class CustomerService {
     private UserRepository userRepository;
 
-    public BankingService(UserRepository userRepository) {
+    public CustomerService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

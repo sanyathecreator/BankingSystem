@@ -2,23 +2,30 @@ package org.example;
 
 import java.util.Scanner;
 
+import org.example.model.Admin;
 import org.example.model.Customer;
 import org.example.model.User;
 import org.example.repository.UserRepository;
+import org.example.service.AdminService;
 import org.example.service.AuthenticationService;
-import org.example.service.BankingService;
+import org.example.service.CustomerService;
+import org.example.ui.AdminMenu;
 import org.example.ui.CustomerMenu;
-import org.example.ui.WelcomeMenu;
+import org.example.ui.AuthenticationMenu;
 
 public class Main {
     public static final Scanner scanner = new Scanner(System.in);
     public static final UserRepository userRepository = new UserRepository();
     public static final AuthenticationService authService = new AuthenticationService(userRepository);
-    public static final BankingService bankingService = new BankingService(userRepository);
+    public static final CustomerService bankingService = new CustomerService(userRepository);
+    public static final AdminService adminService = new AdminService(userRepository);
 
     public static void main(String[] args) {
-        User user = WelcomeMenu.welcomeMenu(scanner, authService);
-        CustomerMenu.mainMenu((Customer) user, scanner, bankingService);
+        User user = AuthenticationMenu.welcomeMenu(scanner, authService);
+        if (user instanceof Customer)
+            CustomerMenu.mainMenu((Customer) user, scanner, bankingService);
+        else if (user instanceof Admin)
+            AdminMenu.mainMenu((Admin) user, scanner, adminService);
     }
 
 }

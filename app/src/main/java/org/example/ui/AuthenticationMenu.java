@@ -5,10 +5,11 @@ import java.util.Scanner;
 import org.example.service.AuthenticationService;
 import org.example.model.User;
 
-public class WelcomeMenu {
+public class AuthenticationMenu extends BaseMenu {
 
     public static User welcomeMenu(Scanner scanner, AuthenticationService authService) {
         User user;
+        clearConsole();
         System.out.println("=== Welcome to Maze Bank ===\n");
         while (true) {
             System.out.println("1. Login");
@@ -37,6 +38,7 @@ public class WelcomeMenu {
     }
 
     private static void registrationMenu(Scanner scanner, AuthenticationService authService) {
+        clearConsole();
         System.out.print("Username: ");
         String username = scanner.nextLine();
         if (authService.userExists(username)) {
@@ -59,6 +61,7 @@ public class WelcomeMenu {
     }
 
     private static User loginMenu(Scanner scanner, AuthenticationService authService) {
+        clearConsole();
         System.out.print("Username: ");
         String username = scanner.nextLine();
         System.out.print("Password: ");
