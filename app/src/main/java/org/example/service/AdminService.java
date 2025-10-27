@@ -16,4 +16,17 @@ public class AdminService {
     public List<User> getAllUsers() {
         return new ArrayList<>(userRepository.getAllUsers().values());
     }
+
+    public List<User> findUserByUsername(String partialUsername) {
+        List<User> matchingUsers = new ArrayList<>();
+        String searchTerm = partialUsername.toLowerCase();
+
+        for (User user : userRepository.getAllUsers().values()) {
+            if (user.getUsername().toLowerCase().contains(searchTerm)) {
+                matchingUsers.add(user);
+            }
+        }
+
+        return matchingUsers;
+    }
 }
