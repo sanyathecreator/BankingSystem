@@ -2,20 +2,31 @@ package org.example.repository;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.example.model.Transaction;
 
 public class TransactionRepository {
     private static final String DATA_FILE = "transactions.dat";
-    private Map<String, Transaction> transactions;
+    private List<Transaction> transactions;
 
     public TransactionRepository() {
-        transactions = new HashMap<>();
+        transactions = new ArrayList<>();
         loadTransaction();
+    }
+
+    public List<Transaction> getAllTransactions() {
+        return new ArrayList<>(transactions);
+    }
+
+    public void saveTransaction(Transaction transaction) {
+        transactions.add(transaction);
+        saveTransactions();
     }
 
     @SuppressWarnings("unchecked")
@@ -31,10 +42,19 @@ public class TransactionRepository {
         }
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
-            transactions = (Map<String, Transaction>) ois.readObject();
+            transactions = (List<Transaction>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Cannot load transactions. Error: " + e.getMessage());
-            transactions = new HashMap<>();
+            transactions = new ArrayList<>();
         }
     }
+
+    private void saveTransactions() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
+            oos.writeObject(transactions);
+        } catch (IOException e) {
+            System.err.println("Cannot save transactions. Error" + e.getMessage());
+        }
+    }
+
 }
