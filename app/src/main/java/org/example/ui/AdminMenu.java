@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.example.model.Admin;
+import org.example.model.Customer;
 import org.example.model.User;
 import org.example.service.AdminService;
 
@@ -58,7 +59,7 @@ public class AdminMenu extends BaseMenu {
         int choice = scanner.nextInt();
         switch (choice) {
             case 1 -> {
-                selectMenu(matchedUsers, scanner);
+                selectMenu(matchedUsers, adminService, scanner);
             }
             default -> {
                 return;
@@ -66,12 +67,37 @@ public class AdminMenu extends BaseMenu {
         }
     }
 
-    private static void selectMenu(List<User> users, Scanner scanner) {
+    private static void selectMenu(List<User> users, AdminService adminService, Scanner scanner) {
         displayUsers(users);
         System.out.print("Select user: ");
         int index = scanner.nextInt();
         User selectedUser = users.get(index);
         System.out.println("Selected user: " + selectedUser.toString());
+        System.out.println("1. Change balance");
+        System.out.println("2. Delete user");
+        System.out.println("0. Back");
+
+        int choice = scanner.nextInt();
+        switch (choice) {
+            case 1 -> {
+                System.out.print("Amount: $");
+                double amount = scanner.nextDouble();
+                adminService.changeBalance((Customer) selectedUser, amount);
+            }
+            case 2 -> {
+                System.out.println("User: " + selectedUser.getUsername() + " deleted!");
+                adminService.deleteUser(selectedUser);
+            }
+            case 0 -> {
+                return;
+            }
+
+            default -> {
+                return;
+            }
+        }
+        ;
+
         scanner.nextLine();
     }
 }

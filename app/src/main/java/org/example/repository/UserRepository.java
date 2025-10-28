@@ -16,6 +16,11 @@ public class UserRepository {
         loadUsers();
     }
 
+    public void deleteUser(User user) {
+        users.remove(user.getUsername());
+        saveUsers();
+    }
+
     public User getUser(String username) {
         return users.get(username);
     }

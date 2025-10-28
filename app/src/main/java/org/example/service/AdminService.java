@@ -3,6 +3,7 @@ package org.example.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.example.model.Customer;
 import org.example.model.User;
 import org.example.repository.UserRepository;
 
@@ -15,6 +16,15 @@ public class AdminService {
 
     public List<User> getAllUsers() {
         return new ArrayList<>(userRepository.getAllUsers().values());
+    }
+
+    public void deleteUser(User user) {
+        userRepository.deleteUser(user);
+    }
+
+    public void changeBalance(Customer customer, double amount) {
+        customer.setBalance(amount);
+        userRepository.saveUser(customer);
     }
 
     public List<User> findUserByUsername(String partialUsername) {
