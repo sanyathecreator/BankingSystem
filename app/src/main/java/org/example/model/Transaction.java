@@ -33,4 +33,10 @@ public class Transaction implements Serializable {
         return amount;
     }
 
+    @Override
+    public String toString() {
+        String formattedString = String.format("[%s] From: %s To: %s Amount: %.2f",
+                timestamp, senderUsername, receiverUsername, amount);
+        return formattedString;
+    }
 }
