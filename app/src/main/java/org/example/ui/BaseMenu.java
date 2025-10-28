@@ -20,38 +20,13 @@ public abstract class BaseMenu {
         }
     }
 
-    protected static <T> T validateInput(Scanner scanner, String prompt, Class<T> expectedType) {
-        while (true) {
-            try {
-                System.out.println(prompt);
-                if (expectedType == Integer.class) {
-                    int value = scanner.nextInt();
-                    scanner.nextLine();
-                    return expectedType.cast(value);
-                } else if (expectedType == Double.class) {
-                    double value = scanner.nextDouble();
-                    validateDoubleInput(value);
-                    scanner.nextLine();
-                    return expectedType.cast(value);
-                } else if (expectedType == String.class) {
-                    String value = scanner.nextLine();
-                    scanner.nextLine();
-                    return expectedType.cast(value);
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please try again");
-                scanner.nextLine();
-            }
-        }
-    }
-
-    protected static int validateIntInput(Scanner scanner, String prompt, int min, int max) {
+    protected static int validateInput(Scanner scanner, String prompt, int min, int max) {
         while (true) {
             try {
                 System.out.println(prompt);
                 int value = scanner.nextInt();
                 scanner.nextLine();
-                if (value <= max || value >= min) {
+                if (value <= max && value >= min) {
                     return value;
                 }
                 System.out.println("Please enter a number between " + min + " and " + max);
@@ -59,14 +34,35 @@ public abstract class BaseMenu {
                 System.out.println("Invalid input. Please try again");
                 scanner.nextLine();
             }
-
         }
     }
 
-    private static double validateDoubleInput(double value) {
-        if (value <= 0) {
-            throw new InputMismatchException();
+    protected static double validateInput(Scanner scanner, String prompt, double min, double max) {
+        while (true) {
+            try {
+                System.out.println(prompt);
+                double value = scanner.nextDouble();
+                scanner.nextLine();
+                if (value <= max && value >= min) {
+                    return value;
+                }
+                System.out.println("Please enter a number between " + min + " and " + max);
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please try again");
+                scanner.nextLine();
+            }
         }
-        return value;
+    }
+
+    protected static String validateInput(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.println(prompt);
+            String value = scanner.nextLine();
+            if (value.isBlank()) {
+                System.out.println("Invalid input. Please try again");
+            } else {
+                return value;
+            }
+        }
     }
 }
