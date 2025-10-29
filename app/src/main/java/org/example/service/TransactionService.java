@@ -7,8 +7,8 @@ import org.example.repository.TransactionRepository;
 import org.example.repository.UserRepository;
 
 public class TransactionService {
-    private TransactionRepository transactionRepository;
-    private UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
 
     public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository) {
         this.transactionRepository = transactionRepository;

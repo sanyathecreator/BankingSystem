@@ -4,7 +4,7 @@ import org.example.model.Customer;
 import org.example.repository.UserRepository;
 
 public class CustomerService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public CustomerService(UserRepository userRepository) {
         this.userRepository = userRepository;

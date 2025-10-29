@@ -8,7 +8,7 @@ import org.example.model.User;
 import org.example.repository.UserRepository;
 
 public class AdminService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public AdminService(UserRepository userRepository) {
         this.userRepository = userRepository;

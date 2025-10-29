@@ -5,7 +5,7 @@ import org.example.model.User;
 import org.example.repository.UserRepository;
 
 public class AuthenticationService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public AuthenticationService(UserRepository userRepository) {
         this.userRepository = userRepository;
