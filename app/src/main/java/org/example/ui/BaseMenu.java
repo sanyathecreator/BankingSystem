@@ -20,6 +20,15 @@ public abstract class BaseMenu {
         }
     }
 
+    protected static boolean confirmAction(Scanner scanner, String prompt) {
+        System.out.print(prompt + "(y/N): ");
+        String input = scanner.nextLine().trim().toLowerCase();
+        if (input.equals("y")) {
+            return true;
+        }
+        return false;
+    }
+
     protected static int validateInput(Scanner scanner, String prompt, int min, int max) {
         while (true) {
             try {
