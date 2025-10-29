@@ -15,19 +15,19 @@ public class TransactionService {
         this.userRepository = userRepository;
     }
 
-    public TransactionStatus makeTransaction(String senderUsername, String receiverUsername, double amount) {
-        TransactionStatus validation = validateTransaction(senderUsername, receiverUsername, amount);
+    public TransactionStatus makeTransaction(Customer sender, String receiverUsername, double amount) {
+        User receiverUser = userRepository.getUser(receiverUsername);
+        TransactionStatus validation = validateTransaction(sender, receiverUser, amount);
         if (validation != TransactionStatus.SUCCESS)
             return validation;
-        Customer sender = (Customer) userRepository.getUser(senderUsername);
-        Customer receiver = (Customer) userRepository.getUser(receiverUsername);
 
+        Customer receiver = (Customer) receiverUser;
         sender.setBalance(sender.getBalance() - amount);
         receiver.setBalance(receiver.getBalance() + amount);
         userRepository.saveUser(sender);
         userRepository.saveUser(receiver);
 
-        transactionRepository.saveTransaction(new Transaction(senderUsername, receiverUsername, amount));
+        transactionRepository.saveTransaction(new Transaction(sender.getUsername(), receiverUsername, amount));
         return TransactionStatus.SUCCESS;
     }
 
@@ -39,17 +39,13 @@ public class TransactionService {
         return TransactionStatus.SUCCESS;
     }
 
-    private TransactionStatus validateTransaction(String senderUsername, String receiverUsername, double amount) {
-        TransactionStatus senderValidation = validateUser(senderUsername);
-        TransactionStatus receiverValidation = validateUser(receiverUsername);
-        if (senderValidation != TransactionStatus.SUCCESS)
-            return senderValidation;
+    private TransactionStatus validateTransaction(Customer sender, User receiver, double amount) {
+        TransactionStatus receiverValidation = validateUser(receiver);
         if (receiverValidation != TransactionStatus.SUCCESS)
             return receiverValidation;
-        if (senderUsername.equals(receiverUsername))
+        if (sender.getUsername().equals(receiver.getUsername()))
             return TransactionStatus.SAME_ACCOUNT;
 
-        Customer sender = (Customer) userRepository.getUser(senderUsername);
         TransactionStatus moneyAmountValidation = validateFunds(sender, amount);
         if (moneyAmountValidation != TransactionStatus.SUCCESS)
             return moneyAmountValidation;
@@ -57,8 +53,7 @@ public class TransactionService {
         return TransactionStatus.SUCCESS;
     }
 
-    private TransactionStatus validateUser(String username) {
-        User user = userRepository.getUser(username);
+    private TransactionStatus validateUser(User user) {
         if (user == null) {
             return TransactionStatus.CUSTOMER_NOT_FOUND;
         }
