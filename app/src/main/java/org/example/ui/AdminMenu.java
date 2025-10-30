@@ -8,6 +8,7 @@ import org.example.model.Customer;
 import org.example.model.Transaction;
 import org.example.model.User;
 import org.example.service.AdminService;
+import org.example.service.TransactionStatus;
 
 public class AdminMenu extends BaseMenu {
 
@@ -100,7 +101,11 @@ public class AdminMenu extends BaseMenu {
             case 1 -> {
                 System.out.print("Amount: $");
                 double amount = scanner.nextDouble();
-                adminService.changeBalance((Customer) selectedUser, amount);
+                TransactionStatus requestResult = adminService.changeBalance(selectedUser, amount);
+                if (requestResult == TransactionStatus.CUSTOMER_WRONG_TYPE)
+                    System.out.println("You can change balance only for customers!");
+                else
+                    System.out.println("Balance changed!");
             }
             case 2 -> {
                 System.out.println("User: " + selectedUser.getUsername() + " deleted!");

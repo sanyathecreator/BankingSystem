@@ -34,9 +34,13 @@ public class AdminService {
         userRepository.deleteUser(user);
     }
 
-    public void changeBalance(Customer customer, double amount) {
+    public TransactionStatus changeBalance(User user, double amount) {
+        if (!(user instanceof Customer))
+            return TransactionStatus.CUSTOMER_WRONG_TYPE;
+        Customer customer = (Customer) user;
         customer.setBalance(amount);
         userRepository.saveUser(customer);
+        return TransactionStatus.SUCCESS;
     }
 
     public List<User> findUserByUsername(String partialUsername) {

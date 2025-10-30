@@ -31,6 +31,7 @@ public class Main {
             CustomerMenu.mainMenu((Customer) user, scanner, customerService, transactionService);
         else if (user instanceof Admin)
             AdminMenu.mainMenu((Admin) user, scanner, adminService);
+        scanner.close();
     }
 
 }
