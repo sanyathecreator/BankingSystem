@@ -39,13 +39,14 @@ public class CustomerMenu extends BaseMenu {
         TransactionStatus requestResult = transactionService.makeTransaction(customer, receiverUsername, amount);
         switch (requestResult) {
             case CUSTOMER_NOT_FOUND:
-                System.out.println("Customer not found!");
+                System.out.println("Customer " + receiverUsername + " not found!");
                 break;
             case CUSTOMER_WRONG_TYPE:
                 System.out.println("You can send money only to customers of our bank!");
                 break;
             case INVALID_AMOUNT:
                 System.out.println("Invalid amount!");
+                System.out.println("Your balance: $" + customer.getBalance());
                 break;
             case NOT_ENOUGH_MONEY:
                 System.out.println("You don't have enough money!");

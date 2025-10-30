@@ -5,18 +5,22 @@ import java.util.Scanner;
 
 import org.example.model.Admin;
 import org.example.model.Customer;
+import org.example.model.Transaction;
 import org.example.model.User;
 import org.example.service.AdminService;
 
 public class AdminMenu extends BaseMenu {
 
     public static void mainMenu(Admin admin, Scanner scanner, AdminService adminService) {
+        clearConsole();
         System.out.println("Welcome, " + admin.getUsername() + "\n");
         while (true) {
-            clearConsole();
             List<User> users = adminService.getAllUsers();
+            List<Transaction> transactions = adminService.getAllTransactions();
             System.out.println("1. Display all users");
             System.out.println("2. Find user by username");
+            System.out.println("3. Display transaction history");
+            System.out.println("4. Log transactions");
             System.out.println("0. Exit");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -33,6 +37,12 @@ public class AdminMenu extends BaseMenu {
                     findMenu(adminService, scanner);
                     scanner.nextLine();
                 }
+                case 3 -> {
+                    displayTransactions(transactions);
+                }
+                case 4 -> {
+                    adminService.logTransactions();
+                }
                 default -> System.out.println("Invalid choice.");
             }
         }
@@ -43,6 +53,14 @@ public class AdminMenu extends BaseMenu {
         System.out.println("Users list: ");
         for (int i = 0; i < users.size(); i++) {
             System.out.println(i + ". " + users.get(i).toString());
+        }
+    }
+
+    private static void displayTransactions(List<Transaction> transactions) {
+        clearConsole();
+        System.out.println("Transaction history: ");
+        for (int i = 0; i < transactions.size(); i++) {
+            System.out.println(i + ". " + transactions.get(i).toString());
         }
     }
 

@@ -51,6 +51,7 @@ nbdist/
 
 # Log files
 *.log
+*.txt
 
 # Package Files
 *.jar

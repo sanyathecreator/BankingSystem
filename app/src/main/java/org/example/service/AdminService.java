@@ -4,18 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.example.model.Customer;
+import org.example.model.Transaction;
 import org.example.model.User;
+import org.example.repository.TransactionRepository;
 import org.example.repository.UserRepository;
 
 public class AdminService {
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
-    public AdminService(UserRepository userRepository) {
+    public AdminService(UserRepository userRepository, TransactionRepository transactionRepository) {
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     public List<User> getAllUsers() {
         return new ArrayList<>(userRepository.getAllUsers().values());
+    }
+
+    public List<Transaction> getAllTransactions() {
+        return new ArrayList<>(transactionRepository.getAllTransactions());
+    }
+
+    public void logTransactions() {
+        transactionRepository.logTransactions();
     }
 
     public void deleteUser(User user) {

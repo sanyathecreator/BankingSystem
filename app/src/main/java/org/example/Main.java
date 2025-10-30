@@ -21,7 +21,7 @@ public class Main {
     public static final TransactionRepository transactionRepository = new TransactionRepository();
     public static final AuthenticationService authService = new AuthenticationService(userRepository);
     public static final CustomerService customerService = new CustomerService(userRepository);
-    public static final AdminService adminService = new AdminService(userRepository);
+    public static final AdminService adminService = new AdminService(userRepository, transactionRepository);
     public static final TransactionService transactionService = new TransactionService(transactionRepository,
             userRepository);
 
