@@ -3,11 +3,14 @@ package org.example.ui;
 import java.util.Scanner;
 
 import org.example.service.CustomerService;
+import org.example.service.TransactionService;
+import org.example.service.TransactionStatus;
 import org.example.model.Customer;
 
 public class CustomerMenu extends BaseMenu {
 
-    public static void mainMenu(Customer customer, Scanner scanner, CustomerService bankingService) {
+    public static void mainMenu(Customer customer, Scanner scanner, CustomerService customerService,
+            TransactionService transactionService) {
         clearConsole();
         System.out.println("Welcome, " + customer.getUsername() + "\n");
         while (true) {
@@ -18,19 +21,45 @@ public class CustomerMenu extends BaseMenu {
             scanner.nextLine();
 
             switch (choice) {
-                case 1 -> bankingService.checkBalance(customer);
-                case 2 -> {
-                    clearConsole();
-                    System.out.print("Amount: ");
-                    double amount = scanner.nextDouble();
-                    scanner.nextLine();
-                    bankingService.transfer(customer, amount);
-                }
+                case 1 -> customerService.checkBalance(customer);
+                case 2 -> transactionMenu(customer, scanner, transactionService);
                 case 0 -> {
                     return;
                 }
                 default -> System.out.println("Invalid choice.");
             }
+        }
+    }
+
+    public static void transactionMenu(Customer customer, Scanner scanner, TransactionService transactionService) {
+        System.out.print("Input receiver username: ");
+        String receiverUsername = scanner.nextLine();
+        System.out.print("Input amount: $");
+        double amount = scanner.nextDouble();
+        TransactionStatus requestResult = transactionService.makeTransaction(customer, receiverUsername, amount);
+        switch (requestResult) {
+            case CUSTOMER_NOT_FOUND:
+                System.out.println("Customer not found!");
+                break;
+            case CUSTOMER_WRONG_TYPE:
+                System.out.println("You can send money only to customers of our bank!");
+                break;
+            case INVALID_AMOUNT:
+                System.out.println("Invalid amount!");
+                break;
+            case NOT_ENOUGH_MONEY:
+                System.out.println("You don't have enough money!");
+                break;
+            case SAME_ACCOUNT:
+                System.out.println("You're trying to send money to yourself!");
+                break;
+            case SUCCESS:
+                System.out.println("Transaction completed=)");
+                System.out.println("Your balance: $" + customer.getBalance());
+                break;
+            default:
+                System.out.println("Try again...");
+                break;
         }
     }
 }

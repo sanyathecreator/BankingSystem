@@ -22,12 +22,13 @@ public class Main {
     public static final AuthenticationService authService = new AuthenticationService(userRepository);
     public static final CustomerService customerService = new CustomerService(userRepository);
     public static final AdminService adminService = new AdminService(userRepository);
-    public static final TransactionService transactionService = new TransactionService(transactionRepository);
+    public static final TransactionService transactionService = new TransactionService(transactionRepository,
+            userRepository);
 
     public static void main(String[] args) {
         User user = AuthenticationMenu.welcomeMenu(scanner, authService);
         if (user instanceof Customer)
-            CustomerMenu.mainMenu((Customer) user, scanner, customerService);
+            CustomerMenu.mainMenu((Customer) user, scanner, customerService, transactionService);
         else if (user instanceof Admin)
             AdminMenu.mainMenu((Admin) user, scanner, adminService);
     }
