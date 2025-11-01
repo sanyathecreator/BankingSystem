@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.example.model.Admin;
-import org.example.model.Customer;
 import org.example.model.Transaction;
 import org.example.model.User;
 import org.example.service.AdminService;
