@@ -8,6 +8,7 @@ import org.example.model.Transaction;
 import org.example.model.User;
 import org.example.service.AdminService;
 import org.example.service.TransactionStatus;
+import org.example.util.ConsoleColors;
 
 public class AdminMenu extends BaseMenu {
 
@@ -30,7 +31,7 @@ public class AdminMenu extends BaseMenu {
                     return;
                 }
                 case 1 -> {
-                    displayUsers(users);
+                    displayUsers(users, adminService);
                     scanner.nextLine();
                 }
                 case 2 -> {
@@ -48,9 +49,10 @@ public class AdminMenu extends BaseMenu {
         }
     }
 
-    private static void displayUsers(List<User> users) {
+    private static void displayUsers(List<User> users, AdminService adminService) {
         clearConsole();
-        System.out.println("Users list: ");
+        System.out.println(
+                "Users list " + ConsoleColors.green(String.format("$%.2f: ", adminService.getAllAmountOfMoney(users))));
         for (int i = 0; i < users.size(); i++) {
             System.out.println(i + ". " + users.get(i).toString());
         }
@@ -70,7 +72,7 @@ public class AdminMenu extends BaseMenu {
         List<User> matchedUsers = adminService.findUserByUsername(partialUsername);
         clearConsole();
         System.out.println("Matched users:");
-        displayUsers(matchedUsers);
+        displayUsers(matchedUsers, adminService);
         System.out.println("\n1. Select user");
         System.out.println("0. Back");
 
@@ -86,7 +88,7 @@ public class AdminMenu extends BaseMenu {
     }
 
     private static void selectMenu(List<User> users, AdminService adminService, Scanner scanner) {
-        displayUsers(users);
+        displayUsers(users, adminService);
         System.out.print("Select user: ");
         int index = scanner.nextInt();
         User selectedUser = users.get(index);

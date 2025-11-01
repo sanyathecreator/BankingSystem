@@ -26,6 +26,18 @@ public class AdminService {
         return new ArrayList<>(transactionRepository.getAllTransactions());
     }
 
+    public double getAllAmountOfMoney(List<User> users) {
+        double totalAmount = 0.0;
+        for (User user : users) {
+            if (user instanceof Customer) {
+                Customer customer = (Customer) user;
+                totalAmount += customer.getBalance();
+            }
+        }
+
+        return totalAmount;
+    }
+
     public void logTransactions() {
         transactionRepository.logTransactions();
     }
