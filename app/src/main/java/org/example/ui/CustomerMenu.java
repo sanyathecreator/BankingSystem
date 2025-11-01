@@ -1,11 +1,14 @@
 package org.example.ui;
 
+import java.util.List;
 import java.util.Scanner;
 
 import org.example.service.CustomerService;
 import org.example.service.TransactionService;
 import org.example.service.TransactionStatus;
+import org.example.util.ConsoleColors;
 import org.example.model.Customer;
+import org.example.model.Transaction;
 
 public class CustomerMenu extends BaseMenu {
 
@@ -16,6 +19,7 @@ public class CustomerMenu extends BaseMenu {
         while (true) {
             System.out.println("1. Check balance");
             System.out.println("2. Transfer money");
+            System.out.println("3. Display transaction history");
             System.out.println("0. Exit");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -23,11 +27,23 @@ public class CustomerMenu extends BaseMenu {
             switch (choice) {
                 case 1 -> customerService.checkBalance(customer);
                 case 2 -> transactionMenu(customer, scanner, transactionService);
+                case 3 -> displayTransactionHistory(customer, customerService);
                 case 0 -> {
                     return;
                 }
                 default -> System.out.println("Invalid choice.");
             }
+        }
+    }
+
+    public static void displayTransactionHistory(Customer customer, CustomerService customerService) {
+        List<Transaction> transactions = customerService.getTransactionsHistory(customer);
+        System.out.println("History:");
+        for (Transaction transaction : transactions) {
+            if (transaction.getReceiverUsername().equals(customer.getUsername()))
+                System.out.println(ConsoleColors.green(transaction.toString()));
+            if (transaction.getSenderUsername().equals(customer.getUsername()))
+                System.out.println(ConsoleColors.red(transaction.toString()));
         }
     }
 
