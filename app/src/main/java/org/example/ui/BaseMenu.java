@@ -32,7 +32,7 @@ public abstract class BaseMenu {
     protected static int validateInput(Scanner scanner, String prompt, int min, int max) {
         while (true) {
             try {
-                System.out.println(prompt);
+                System.out.print(prompt);
                 int value = scanner.nextInt();
                 scanner.nextLine();
                 if (value <= max && value >= min) {
@@ -49,7 +49,7 @@ public abstract class BaseMenu {
     protected static double validateInput(Scanner scanner, String prompt, double min, double max) {
         while (true) {
             try {
-                System.out.println(prompt);
+                System.out.print(prompt);
                 double value = scanner.nextDouble();
                 scanner.nextLine();
                 if (value <= max && value >= min) {
@@ -65,7 +65,7 @@ public abstract class BaseMenu {
 
     protected static String validateInput(Scanner scanner, String prompt) {
         while (true) {
-            System.out.println(prompt);
+            System.out.print(prompt);
             String value = scanner.nextLine();
             if (value.isBlank()) {
                 System.out.println("Invalid input. Please try again");
