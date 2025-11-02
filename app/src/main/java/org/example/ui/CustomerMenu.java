@@ -21,38 +21,52 @@ public class CustomerMenu extends BaseMenu {
             System.out.println("2. Transfer money");
             System.out.println("3. Display transaction history");
             System.out.println("0. Exit");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            int choice = validateInput(scanner, "Choose option: ", 0, 3);
 
             switch (choice) {
-                case 1 -> customerService.checkBalance(customer);
-                case 2 -> transactionMenu(customer, scanner, transactionService);
-                case 3 -> displayTransactionHistory(customer, customerService);
+                case 1 -> {
+                    clearConsole();
+                    customerService.checkBalance(customer);
+                }
+                case 2 -> {
+                    clearConsole();
+                    transactionMenu(customer, scanner, transactionService);
+                }
+                case 3 -> {
+                    clearConsole();
+                    displayTransactionHistory(customer, customerService);
+                }
                 case 0 -> {
+                    clearConsole();
                     return;
                 }
                 default -> System.out.println("Invalid choice.");
             }
+            System.out.println();
         }
     }
 
     public static void displayTransactionHistory(Customer customer, CustomerService customerService) {
         List<Transaction> transactions = customerService.getTransactionsHistory(customer);
-        System.out.println("History:");
-        for (Transaction transaction : transactions) {
-            if (transaction.getReceiverUsername().equals(customer.getUsername()))
-                System.out.println(ConsoleColors.green(transaction.toString()));
-            if (transaction.getSenderUsername().equals(customer.getUsername()))
-                System.out.println(ConsoleColors.red(transaction.toString()));
+        System.out.println("Transaction History:");
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions found.");
+        } else {
+            for (Transaction transaction : transactions) {
+                if (transaction.getReceiverUsername().equals(customer.getUsername()))
+                    System.out.println(ConsoleColors.green(transaction.toString()));
+                if (transaction.getSenderUsername().equals(customer.getUsername()))
+                    System.out.println(ConsoleColors.red(transaction.toString()));
+            }
         }
     }
 
     public static void transactionMenu(Customer customer, Scanner scanner, TransactionService transactionService) {
-        System.out.print("Input receiver username: ");
-        String receiverUsername = scanner.nextLine();
-        System.out.print("Input amount: $");
-        double amount = scanner.nextDouble();
+        String receiverUsername = validateInput(scanner, "Input receiver username: ");
+        double amount = validateInput(scanner, "Input amount: $", 0.01, Double.MAX_VALUE);
+
         TransactionStatus requestResult = transactionService.makeTransaction(customer, receiverUsername, amount);
+        System.out.println();
         switch (requestResult) {
             case CUSTOMER_NOT_FOUND:
                 System.out.println("Customer " + receiverUsername + " not found!");
@@ -66,13 +80,14 @@ public class CustomerMenu extends BaseMenu {
                 break;
             case NOT_ENOUGH_MONEY:
                 System.out.println("You don't have enough money!");
+                System.out.println("Your balance: $" + customer.getBalance());
                 break;
             case SAME_ACCOUNT:
                 System.out.println("You're trying to send money to yourself!");
                 break;
             case SUCCESS:
-                System.out.println("Transaction completed=)");
-                System.out.println("Your balance: $" + customer.getBalance());
+                System.out.println("Transaction completed successfully!");
+                System.out.println("Your new balance: $" + customer.getBalance());
                 break;
             default:
                 System.out.println("Try again...");

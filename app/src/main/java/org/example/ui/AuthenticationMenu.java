@@ -15,9 +15,7 @@ public class AuthenticationMenu extends BaseMenu {
             System.out.println("1. Login");
             System.out.println("2. Registration");
             System.out.println("0. Exit");
-            System.out.print("Choose option: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            int choice = validateInput(scanner, "Choose option: ", 0, 2);
 
             switch (choice) {
                 case 1 -> {
@@ -29,6 +27,7 @@ public class AuthenticationMenu extends BaseMenu {
                 }
                 case 2 -> registrationMenu(scanner, authService);
                 case 0 -> {
+                    clearConsole();
                     System.out.println("Goodbye!");
                     System.exit(0);
                 }
@@ -39,37 +38,33 @@ public class AuthenticationMenu extends BaseMenu {
 
     private static void registrationMenu(Scanner scanner, AuthenticationService authService) {
         clearConsole();
-        System.out.print("Username: ");
-        String username = scanner.nextLine();
+        String username = validateInput(scanner, "Username: ");
         if (authService.userExists(username)) {
             System.out.println("This username is already taken!\n");
             return;
         }
 
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
-        System.out.print("Confirm password: ");
-        String confirmPassword = scanner.nextLine();
+        String password = validateInput(scanner, "Password: ");
+        String confirmPassword = validateInput(scanner, "Confirm password: ");
 
         if (!password.equals(confirmPassword)) {
-            System.out.println("Passwords don't match!");
+            System.out.println("Passwords don't match!\n");
             return;
         }
 
         authService.register(username, password);
+        clearConsole();
         System.out.println("Registration successful! You can now login.\n");
     }
 
     private static User loginMenu(Scanner scanner, AuthenticationService authService) {
         clearConsole();
-        System.out.print("Username: ");
-        String username = scanner.nextLine();
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
+        String username = validateInput(scanner, "Username: ");
+        String password = validateInput(scanner, "Password: ");
 
         User user = authService.login(username, password);
         if (user == null) {
-            System.out.println("Incorrect username or password");
+            System.out.println("Incorrect username or password\n");
         }
         return user;
     }

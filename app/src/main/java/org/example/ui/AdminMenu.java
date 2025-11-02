@@ -23,26 +23,33 @@ public class AdminMenu extends BaseMenu {
             System.out.println("3. Display transaction history");
             System.out.println("4. Log transactions");
             System.out.println("0. Exit");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            int choice = validateInput(scanner, "Choose option: ", 0, 4);
 
             switch (choice) {
                 case 0 -> {
+                    clearConsole();
                     return;
                 }
                 case 1 -> {
                     displayUsers(users, adminService);
+                    System.out.println("\nPress Enter to continue...");
                     scanner.nextLine();
+                    clearConsole();
                 }
                 case 2 -> {
                     findMenu(adminService, scanner);
-                    scanner.nextLine();
+                    clearConsole();
                 }
                 case 3 -> {
                     displayTransactions(transactions);
+                    System.out.println("\nPress Enter to continue...");
+                    scanner.nextLine();
+                    clearConsole();
                 }
                 case 4 -> {
+                    clearConsole();
                     adminService.logTransactions();
+                    System.out.println();
                 }
                 default -> System.out.println("Invalid choice.");
             }
@@ -67,16 +74,24 @@ public class AdminMenu extends BaseMenu {
     }
 
     private static void findMenu(AdminService adminService, Scanner scanner) {
-        System.out.print("Username: ");
-        String partialUsername = scanner.nextLine();
+        clearConsole();
+        String partialUsername = validateInput(scanner, "Username: ");
         List<User> matchedUsers = adminService.findUserByUsername(partialUsername);
         clearConsole();
         System.out.println("Matched users:");
         displayUsers(matchedUsers, adminService);
+
+        if (matchedUsers.isEmpty()) {
+            System.out.println("\nNo users found.");
+            System.out.println("\nPress Enter to continue...");
+            scanner.nextLine();
+            return;
+        }
+
         System.out.println("\n1. Select user");
         System.out.println("0. Back");
 
-        int choice = scanner.nextInt();
+        int choice = validateInput(scanner, "Choose option: ", 0, 1);
         switch (choice) {
             case 1 -> {
                 selectMenu(matchedUsers, adminService, scanner);
@@ -88,40 +103,46 @@ public class AdminMenu extends BaseMenu {
     }
 
     private static void selectMenu(List<User> users, AdminService adminService, Scanner scanner) {
+        clearConsole();
         displayUsers(users, adminService);
-        System.out.print("Select user: ");
-        int index = scanner.nextInt();
+        int index = validateInput(scanner, "Select user (enter number): ", 0, users.size() - 1);
         User selectedUser = users.get(index);
+
+        clearConsole();
         System.out.println("Selected user: " + selectedUser.toString());
-        System.out.println("1. Change balance");
+        System.out.println("\n1. Change balance");
         System.out.println("2. Delete user");
         System.out.println("0. Back");
 
-        int choice = scanner.nextInt();
+        int choice = validateInput(scanner, "Choose option: ", 0, 2);
         switch (choice) {
             case 1 -> {
-                System.out.print("Amount: $");
-                double amount = scanner.nextDouble();
+                double amount = validateInput(scanner, "Amount: $", -Double.MAX_VALUE, Double.MAX_VALUE);
                 TransactionStatus requestResult = adminService.changeBalance(selectedUser, amount);
+                System.out.println();
                 if (requestResult == TransactionStatus.CUSTOMER_WRONG_TYPE)
                     System.out.println("You can change balance only for customers!");
                 else
-                    System.out.println("Balance changed!");
+                    System.out.println("Balance changed successfully!");
+                System.out.println("\nPress Enter to continue...");
+                scanner.nextLine();
             }
             case 2 -> {
-                System.out.println("User: " + selectedUser.getUsername() + " deleted!");
-                adminService.deleteUser(selectedUser);
+                if (confirmAction(scanner, "Are you sure you want to delete user " + selectedUser.getUsername() + "? ")) {
+                    adminService.deleteUser(selectedUser);
+                    System.out.println("\nUser " + selectedUser.getUsername() + " deleted!");
+                } else {
+                    System.out.println("\nDeletion cancelled.");
+                }
+                System.out.println("\nPress Enter to continue...");
+                scanner.nextLine();
             }
             case 0 -> {
                 return;
             }
-
             default -> {
                 return;
             }
         }
-        ;
-
-        scanner.nextLine();
     }
 }
