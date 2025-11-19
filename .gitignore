@@ -79,7 +79,14 @@ Desktop.ini
 # Linux
 *~
 
-# Application specific
-*.db
-*.sqlite
+# Application specific - Old serialized data
 *.dat
+
+# Database files
+app/data/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-journal
