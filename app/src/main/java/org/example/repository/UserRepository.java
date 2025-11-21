@@ -48,6 +48,20 @@ public class UserRepository {
         return users.containsKey(username);
     }
 
+    public boolean userExistsInDb(String username) {
+        String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            System.err.println("Error finding user in DB: " + e.getMessage());
+        }
+
+        return false;
+    }
+
     public Map<String, User> getAllUsers() {
         return new HashMap<>(users);
     }
@@ -55,23 +69,47 @@ public class UserRepository {
     public void saveUser(User user) {
         // Update in-memory cache
         users.put(user.getUsername(), user);
+        if (userExistsInDb(user.getUsername())) {
+            updateUserInDb(user);
+        } else {
+            insertUserInDb(user);
+        }
+    }
 
-        String sql = "INSERT OR REPLACE INTO users (username, password, balance, is_admin) VALUES (?, ?, ?, ?)";
+    private void insertUserInDb(User user) {
+        String sql = "INSERT INTO users (username, password, balance, is_admin) VALUES(?, ?, ?, ?)";
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getPassword());
-
+        try (PreparedStatement pstm = connection.prepareStatement(sql)) {
+            pstm.setString(1, user.getUsername());
+            pstm.setString(2, user.getPassword());
             if (user instanceof Customer) {
-                pstmt.setDouble(3, ((Customer) user).getBalance());
+                pstm.setDouble(3, ((Customer) user).getBalance());
             } else {
-                pstmt.setDouble(3, 0.0);
+                pstm.setDouble(3, 0.0);
             }
 
-            pstmt.setBoolean(4, user instanceof Admin);
+            pstm.setBoolean(4, user instanceof Admin);
+            pstm.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error inserting user: " + e.getMessage());
+        }
+    }
+
+    private void updateUserInDb(User user) {
+        String sql = "UPDATE users SET password = ?, balance = ?, is_admin = ? WHERE username = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, user.getPassword());
+            if (user instanceof Customer) {
+                pstmt.setDouble(2, ((Customer) user).getBalance());
+            } else {
+                pstmt.setDouble(2, 0.0);
+            }
+            pstmt.setBoolean(3, user instanceof Admin);
+            pstmt.setString(4, user.getUsername());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error saving user: " + e.getMessage());
+            System.err.println("Error updating user: " + e.getMessage());
         }
     }
 
