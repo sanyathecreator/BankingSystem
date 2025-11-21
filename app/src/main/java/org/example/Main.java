@@ -13,11 +13,13 @@ import org.example.service.CustomerService;
 import org.example.service.TransactionService;
 import org.example.ui.AdminMenu;
 import org.example.ui.CustomerMenu;
+import org.example.util.DatabaseManager;
 import org.example.ui.AuthenticationMenu;
 
 public class Main {
     public static final Scanner scanner = new Scanner(System.in);
-    public static final UserRepository userRepository = new UserRepository();
+    public static final DatabaseManager databaseManager = new DatabaseManager();
+    public static final UserRepository userRepository = new UserRepository(databaseManager);
     public static final TransactionRepository transactionRepository = new TransactionRepository();
     public static final AuthenticationService authService = new AuthenticationService(userRepository);
     public static final CustomerService customerService = new CustomerService(userRepository, transactionRepository);

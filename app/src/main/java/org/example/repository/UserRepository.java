@@ -1,24 +1,43 @@
 package org.example.repository;
 
-import java.io.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.example.model.Admin;
+import org.example.model.Customer;
 import org.example.model.User;
+import org.example.util.DatabaseManager;
 
 public class UserRepository {
-    private static final String DATA_FILE = "users.dat";
     private Map<String, User> users;
+    private Connection connection;
 
-    public UserRepository() {
+    public UserRepository(DatabaseManager databaseManager) {
+        connection = databaseManager.getConnection();
         users = new HashMap<>();
         loadUsers();
+        // Create default admin if no admin exists
+        if (!userExists("admin")) {
+            createDefaultAdmin();
+        }
     }
 
     public void deleteUser(User user) {
+        // Delete user from in-memory cache
         users.remove(user.getUsername());
-        saveUsers();
+
+        String sql = "DELETE FROM users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, user.getUsername());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting user: " + e.getMessage());
+        }
     }
 
     public User getUser(String username) {
@@ -34,41 +53,52 @@ public class UserRepository {
     }
 
     public void saveUser(User user) {
+        // Update in-memory cache
         users.put(user.getUsername(), user);
-        saveUsers();
+
+        String sql = "INSERT OR REPLACE INTO users (username, password, balance, is_admin) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, user.getUsername());
+            pstmt.setString(2, user.getPassword());
+
+            if (user instanceof Customer) {
+                pstmt.setDouble(3, ((Customer) user).getBalance());
+            } else {
+                pstmt.setDouble(3, 0.0);
+            }
+
+            pstmt.setBoolean(4, user instanceof Admin);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error saving user: " + e.getMessage());
+        }
     }
 
-    @SuppressWarnings("unchecked")
     private void loadUsers() {
-        File file = new File(DATA_FILE);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-                createDefaultAdmin();
-            } catch (IOException e) {
-                System.err.println("Cannot create " + DATA_FILE + " file. Error: " + e.getMessage());
-            }
-            return;
-        }
+        String sql = "SELECT * FROM users";
 
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
-            users = (Map<String, User>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Cannot load users. Error: " + e.getMessage());
-            users = new HashMap<>();
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                String username = rs.getString("username");
+                String password = rs.getString("password");
+                double balance = rs.getDouble("balance");
+                boolean isAdmin = rs.getBoolean("is_admin");
+                if (isAdmin) {
+                    users.put(username, new Admin(username, password));
+                } else {
+                    users.put(username, new Customer(username, password, balance));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Cannot load users: " + e.getMessage());
         }
     }
 
     private void createDefaultAdmin() {
         Admin admin = new Admin("admin", "admin");
+        users.put("admin", admin);
         saveUser(admin);
-    }
-
-    private void saveUsers() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
-            oos.writeObject(users);
-        } catch (IOException e) {
-            System.err.println("Cannot save users. Error" + e.getMessage());
-        }
     }
 }
