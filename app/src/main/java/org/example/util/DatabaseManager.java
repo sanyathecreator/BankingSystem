@@ -39,12 +39,12 @@ public class DatabaseManager {
         String sql = """
                     CREATE TABLE IF NOT EXISTS transactions (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        sender_id INTEGER NOT NULL,
-                        receiver_id INTEGER NOT NULL,
+                        sender_username TEXT NOT NULL,
+                        receiver_username TEXT NOT NULL,
                         amount REAL NOT NULL,
-                        timestamp INTEGER NOT NULL,
-                        FOREIGN KEY (sender_id) REFERENCES users(id),
-                        FOREIGN KEY (receiver_id) REFERENCES users(id)
+                        timestamp TEXT NOT NULL,
+                        FOREIGN KEY (sender_username) REFERENCES users(username),
+                        FOREIGN KEY (receiver_username) REFERENCES users(username)
                     );
                 """;
         try (Statement stmt = connection.createStatement()) {

@@ -1,25 +1,28 @@
 package org.example.repository;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.example.model.Transaction;
+import org.example.util.DatabaseManager;
 
 public class TransactionRepository {
-    private static final String DATA_FILE = "transactions.dat";
     private static final String LOGS_FILE = "logs.txt";
     private List<Transaction> transactions;
+    private Connection connection;
 
-    public TransactionRepository() {
+    public TransactionRepository(DatabaseManager databaseManager) {
         transactions = new ArrayList<>();
+        connection = databaseManager.getConnection();
         loadTransaction();
     }
 
@@ -29,7 +32,7 @@ public class TransactionRepository {
 
     public void saveTransaction(Transaction transaction) {
         transactions.add(transaction);
-        saveTransactions();
+        saveTransactionToDb(transaction);
     }
 
     public void logTransactions() {
@@ -43,32 +46,36 @@ public class TransactionRepository {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    private void saveTransactionToDb(Transaction transaction) {
+        String sql = "INSERT INTO transactions (sender_username, receiver_username, amount, timestamp) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, transaction.getSenderUsername());
+            pstmt.setString(2, transaction.getReceiverUsername());
+            pstmt.setDouble(3, transaction.getAmount());
+            pstmt.setString(4, transaction.getTimestamp().toString());
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error saving transaction to DB: " + e.getMessage());
+        }
+    }
+
     private void loadTransaction() {
-        File file = new File(DATA_FILE);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                System.err.println("Cannot create " + DATA_FILE + " file. Error: " + e.getMessage());
+        String sql = "SELECT * FROM transactions";
+
+        try (Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                LocalDateTime timestamp = LocalDateTime.parse(rs.getString("timestamp"));
+                String senderUsername = rs.getString("sender_username");
+                String receiverUsername = rs.getString("receiver_username");
+                double amount = rs.getDouble("amount");
+                transactions.add(new Transaction(timestamp, senderUsername, receiverUsername, amount));
             }
-            return;
-        }
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
-            transactions = (List<Transaction>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Cannot load transactions. Error: " + e.getMessage());
-            transactions = new ArrayList<>();
+        } catch (SQLException e) {
+            System.err.println("Error loading transactions: " + e.getMessage());
         }
     }
-
-    private void saveTransactions() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
-            oos.writeObject(transactions);
-        } catch (IOException e) {
-            System.err.println("Cannot save transactions. Error" + e.getMessage());
-        }
-    }
-
 }

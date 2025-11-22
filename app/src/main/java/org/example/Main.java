@@ -20,7 +20,7 @@ public class Main {
     public static final Scanner scanner = new Scanner(System.in);
     public static final DatabaseManager databaseManager = new DatabaseManager();
     public static final UserRepository userRepository = new UserRepository(databaseManager);
-    public static final TransactionRepository transactionRepository = new TransactionRepository();
+    public static final TransactionRepository transactionRepository = new TransactionRepository(databaseManager);
     public static final AuthenticationService authService = new AuthenticationService(userRepository);
     public static final CustomerService customerService = new CustomerService(userRepository, transactionRepository);
     public static final AdminService adminService = new AdminService(userRepository, transactionRepository);
