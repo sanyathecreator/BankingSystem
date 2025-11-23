@@ -12,6 +12,7 @@ import org.example.model.Admin;
 import org.example.model.Customer;
 import org.example.model.User;
 import org.example.util.DatabaseManager;
+import org.example.util.PasswordHasher;
 
 public class UserRepository {
     private Map<String, User> users;
@@ -135,7 +136,8 @@ public class UserRepository {
     }
 
     private void createDefaultAdmin() {
-        Admin admin = new Admin("admin", "admin");
+        String hashedPassword = PasswordHasher.hashPassword("admin");
+        Admin admin = new Admin("admin", hashedPassword);
         users.put("admin", admin);
         saveUser(admin);
     }

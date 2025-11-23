@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.model.Customer;
 import org.example.model.User;
 import org.example.repository.UserRepository;
+import org.example.util.PasswordHasher;
 
 public class AuthenticationService {
     private final UserRepository userRepository;
@@ -20,7 +21,7 @@ public class AuthenticationService {
         } else {
             user = userRepository.getUser(username);
         }
-        if (!user.getPassword().equals(password)) {
+        if (!PasswordHasher.verifyPassword(password, user.getPassword())) {
             System.out.println("Wrong password!");
             return null;
         }
@@ -32,7 +33,8 @@ public class AuthenticationService {
     }
 
     public void register(String username, String password) {
-        Customer customer = new Customer(username, password, 1000);
+        String hashedPassword = PasswordHasher.hashPassword(password);
+        Customer customer = new Customer(username, hashedPassword, 1000);
         userRepository.saveUser(customer);
     }
 }

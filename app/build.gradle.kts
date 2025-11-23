@@ -19,6 +19,9 @@ dependencies {
     // SQLite JDBC driver
     implementation("org.xerial:sqlite-jdbc:3.45.0.0")
 
+    // BCrypt for password hashing
+    implementation("org.mindrot:jbcrypt:0.4")
+
     // Use JUnit test framework.
     testImplementation(libs.junit)
 
